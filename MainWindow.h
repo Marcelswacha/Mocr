@@ -20,6 +20,7 @@ private Q_SLOTS:
     void onZoomInButtonClicked();
     void onZoomOutButtonClicked();
     void onGetTextButtonClicked();
+    void onRotateButtonClicked();
 
 private:
     QGraphicsView* mImageView;

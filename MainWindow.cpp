@@ -3,6 +3,7 @@
 #include <QToolButton>
 #include <QStyle>
 #include <QGraphicsScene>
+#include <QPixmap>
 
 #include <tesseract/baseapi.h>
 #include <leptonica/allheaders.h>
@@ -16,8 +17,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
     QHBoxLayout* layout = new QHBoxLayout();
 
-    QImage image(IM_PATH);
-    mBaseImage = new QGraphicsPixmapItem(QPixmap::fromImage(image));
+    QPixmap image(IM_PATH);
+    mBaseImage = new QGraphicsPixmapItem(image);
     QGraphicsScene* scene = new QGraphicsScene;
     scene->addItem(mBaseImage);
 
@@ -46,6 +47,12 @@ MainWindow::MainWindow(QWidget *parent)
     zoomOutButton->setText("ZoomOut");
     connect(zoomOutButton, SIGNAL(clicked()), this, SLOT(onZoomOutButtonClicked()));
     buttonLayout->addWidget(zoomOutButton);
+
+    // Rotate button
+    QToolButton* rotateButton = new QToolButton();
+    rotateButton->setText("Rotate");
+    connect(rotateButton, SIGNAL(clicked()), this, SLOT(onRotateButtonClicked()));
+    buttonLayout->addWidget(rotateButton);
 
     // GetText button
     QToolButton* getTextButton = new QToolButton();
@@ -138,4 +145,16 @@ void MainWindow::onGetTextButtonClicked()
     char* out = tess.GetUTF8Text();
     mTextView->setPlainText(out);
 
+}
+
+void MainWindow::onRotateButtonClicked()
+{
+    QPixmap basePix = mBaseImage->pixmap();
+    QTransform transform;
+    QTransform trans = transform.rotate(90);
+    QPixmap *transPixmap = new QPixmap(basePix.transformed(trans));
+
+    mBaseImage->setPixmap(*transPixmap);
+
+    mImageView->update();
 }
