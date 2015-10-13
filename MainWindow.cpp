@@ -23,7 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
     QGraphicsScene* scene = new QGraphicsScene;
     scene->addItem(mBaseImage);
 
-    mImageView = new ImageView();
+    mImageView = new ImageView(mBaseImage);
     mImageView->setScene(scene);
     //mImageView->fitInView(scene->itemsBoundingRect() ,Qt::KeepAspectRatio);
 
@@ -61,6 +61,12 @@ MainWindow::MainWindow(QWidget *parent)
     getTextButton->setText("get Text");
     connect(getTextButton, SIGNAL(clicked()), this, SLOT(onGetTextButtonClicked()));
     buttonLayout->addWidget(getTextButton);
+
+    // Cut button
+    QToolButton* cutButton = new QToolButton();
+    cutButton->setText("Copy");
+    connect(cutButton, SIGNAL(clicked()), this, SLOT(onCutButtonClicked()));
+    buttonLayout->addWidget(cutButton);
 
     layout->addLayout(buttonLayout);
 
@@ -159,4 +165,9 @@ void MainWindow::onRotateButtonClicked()
     mBaseImage->setPixmap(*transPixmap);
 
     mImageView->update();
+}
+
+void MainWindow::onCutButtonClicked()
+{
+    mImageView->copy();
 }

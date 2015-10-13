@@ -9,12 +9,22 @@
 class ImageView: public QGraphicsView
 {
 public:
-    ImageView(QWidget* parent = NULL) : QGraphicsView(parent)
+    ImageView(QGraphicsPixmapItem* image, QWidget* parent = NULL) : QGraphicsView(parent)
     {
+        mBaseImage = image;
         isFirstAssigned = false;
         rect = NULL;
         topLeft = QPointF(0,0);
         bottomRight = QPointF(0,0);
+    }
+
+    void copy()
+    {
+        if (rect != NULL) {
+            QPixmap copy = mBaseImage->pixmap().copy(QRectF(topLeft, bottomRight).toAlignedRect());
+            mBaseImage->setPixmap(copy);
+            update();
+        }
     }
 
     void mouseMoveEvent( QMouseEvent* event )
@@ -64,6 +74,7 @@ private:
     QPointF topLeft;
     QPointF bottomRight;
     QGraphicsItem * rect;
+    QGraphicsPixmapItem* mBaseImage;
 
 };
 

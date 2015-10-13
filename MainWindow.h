@@ -7,6 +7,8 @@
 #include <QGraphicsPixmapItem>
 #include <QPlainTextEdit>
 
+#include "ImageView.h"
+
 class MainWindow : public QWidget
 {
     Q_OBJECT
@@ -21,9 +23,10 @@ private Q_SLOTS:
     void onZoomOutButtonClicked();
     void onGetTextButtonClicked();
     void onRotateButtonClicked();
+    void onCutButtonClicked();
 
 private:
-    QGraphicsView* mImageView;
+    ImageView* mImageView;
     QGraphicsPixmapItem* mBaseImage;
     QPlainTextEdit* mTextView;
 };
