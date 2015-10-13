@@ -9,6 +9,7 @@ SOURCES += \
     MainWindow.cpp
 
 HEADERS += \
-    MainWindow.h
+    MainWindow.h \
+    ImageView.h
 
 LIBS += -llept

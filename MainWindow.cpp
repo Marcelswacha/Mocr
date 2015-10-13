@@ -10,6 +10,7 @@
 
 
 #include "MainWindow.h"
+#include "ImageView.h"
 
 const char* const IM_PATH = "/home/m-swacha/Pulpit/sample.jpg";
 MainWindow::MainWindow(QWidget *parent)
@@ -22,7 +23,8 @@ MainWindow::MainWindow(QWidget *parent)
     QGraphicsScene* scene = new QGraphicsScene;
     scene->addItem(mBaseImage);
 
-    mImageView = new QGraphicsView(scene);
+    mImageView = new ImageView();
+    mImageView->setScene(scene);
     //mImageView->fitInView(scene->itemsBoundingRect() ,Qt::KeepAspectRatio);
 
     layout->addWidget(mImageView);
