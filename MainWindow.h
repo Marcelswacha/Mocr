@@ -5,6 +5,7 @@
 
 #include <QGraphicsView>
 #include <QGraphicsPixmapItem>
+#include <QPlainTextEdit>
 
 class MainWindow : public QWidget
 {
@@ -18,10 +19,12 @@ private Q_SLOTS:
     void onLoadButtonClicked();
     void onZoomInButtonClicked();
     void onZoomOutButtonClicked();
+    void onGetTextButtonClicked();
 
 private:
     QGraphicsView* mImageView;
     QGraphicsPixmapItem* mBaseImage;
+    QPlainTextEdit* mTextView;
 };
 
 #endif // MAINWINDOW_H
