@@ -1,31 +1,16 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QToolButton>
-#include <QStyle>
-#include <QGraphicsScene>
-#include <QPixmap>
-
-#include <tesseract/baseapi.h>
-#include <leptonica/allheaders.h>
-
 
 #include "MainWindow.h"
 #include "ImageView.h"
 
-const char* const IM_PATH = "/home/m-swacha/Pulpit/sample.jpg";
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent)
 {
     QHBoxLayout* layout = new QHBoxLayout();
 
-    QPixmap image(IM_PATH);
-    mBaseImage = new QGraphicsPixmapItem(image);
-    QGraphicsScene* scene = new QGraphicsScene;
-    scene->addItem(mBaseImage);
-
-    mImageView = new ImageView(mBaseImage);
-    mImageView->setScene(scene);
-    //mImageView->fitInView(scene->itemsBoundingRect() ,Qt::KeepAspectRatio);
+    mImageView = new ImageView();
 
     layout->addWidget(mImageView);
 
@@ -76,8 +61,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     layout->addWidget(mTextView);
 
-
-
     setLayout(layout);
     setWindowTitle("Mocr");
     resize(1280, 1024);
@@ -85,8 +68,8 @@ MainWindow::MainWindow(QWidget *parent)
     show();
 }
 
-MainWindow::~MainWindow() {
-
+MainWindow::~MainWindow()
+{
 }
 
 void MainWindow::onLoadButtonClicked()
@@ -101,70 +84,17 @@ void MainWindow::onZoomInButtonClicked()
 
 void MainWindow::onZoomOutButtonClicked()
 {
-    mImageView->scale(0.8, 0.8);
+    mImageView->scale(1/1.25, 1/1.25);
 }
 
-
-PIX* qImage2PIX(const QImage& qImage) {
-  PIX * pixs;
-
-  QImage myImage = qImage.rgbSwapped();
-  int width = myImage.width();
-  int height = myImage.height();
-  int depth = myImage.depth();
-  int wpl = myImage.bytesPerLine() / 4;
-
-  pixs = pixCreate(width, height, depth);
-  pixSetWpl(pixs, wpl);
-  pixSetColormap(pixs, NULL);
-  l_uint32 *datas = pixs->data;
-
-  for (int y = 0; y < height; y++) {
-    l_uint32 *lines = datas + y * wpl;
-    QByteArray a((const char*)myImage.scanLine(y), myImage.bytesPerLine());
-    for (int j = 0; j < a.size(); j++) {
-      *((l_uint8 *)lines + j) = a[j];
-    }
-  }
-
-  const qreal toDPM = 1.0 / 0.0254;
-  int resolutionX = myImage.dotsPerMeterX() / toDPM;
-  int resolutionY = myImage.dotsPerMeterY() / toDPM;
-
-  if (resolutionX < 300) resolutionX = 300;
-  if (resolutionY < 300) resolutionY = 300;
-  pixSetResolution(pixs, resolutionX, resolutionY);
-
-  return pixEndianByteSwapNew(pixs);
-}
 void MainWindow::onGetTextButtonClicked()
 {
-    // Get Image
-    QImage image = mBaseImage->pixmap().toImage();
-    PIX* pix = qImage2PIX(image);
-
-    // Pass data to tesseract
-    tesseract::TessBaseAPI tess;
-    tess.Init(NULL, "pol", tesseract::OEM_DEFAULT);
-    tess.SetPageSegMode(tesseract::PSM_AUTO);
-    tess.SetImage(pix);
-
-    // Get text
-    char* out = tess.GetUTF8Text();
-    mTextView->setPlainText(out);
-
+    mTextView->setPlainText(mImageView->getText());
 }
 
 void MainWindow::onRotateButtonClicked()
 {
-    QPixmap basePix = mBaseImage->pixmap();
-    QTransform transform;
-    QTransform trans = transform.rotate(90);
-    QPixmap *transPixmap = new QPixmap(basePix.transformed(trans));
-
-    mBaseImage->setPixmap(*transPixmap);
-
-    mImageView->update();
+    mImageView->rotate();
 }
 
 void MainWindow::onCutButtonClicked()

@@ -27,7 +27,6 @@ private Q_SLOTS:
 
 private:
     ImageView* mImageView;
-    QGraphicsPixmapItem* mBaseImage;
     QPlainTextEdit* mTextView;
 };
 

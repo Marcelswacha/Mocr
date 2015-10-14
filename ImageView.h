@@ -1,81 +1,36 @@
 #ifndef IMAGEVIEW_H
 #define IMAGEVIEW_H
 
+#include <leptonica/allheaders.h>
+
 #include <QGraphicsView>
-#include <QDebug>
-#include <QMouseEvent>
 #include <QGraphicsRectItem>
+#include <QMouseEvent>
 
 class ImageView: public QGraphicsView
 {
 public:
-    ImageView(QGraphicsPixmapItem* image, QWidget* parent = NULL) : QGraphicsView(parent)
-    {
-        mBaseImage = image;
-        isFirstAssigned = false;
-        rect = NULL;
-        topLeft = QPointF(0,0);
-        bottomRight = QPointF(0,0);
-    }
+    ImageView(QWidget* parent = NULL);
 
-    void copy()
-    {
-        if (rect != NULL) {
-            QPixmap copy = mBaseImage->pixmap().copy(QRectF(topLeft, bottomRight).toAlignedRect());
-            mBaseImage->setPixmap(copy);
-            update();
-        }
-    }
+    void load(const QString& path);
+    void copy();
+    void rotate();
+    QString getText();
 
-    void mouseMoveEvent( QMouseEvent* event )
-    {
-        QPointF pos =  mapToScene( event->pos() );
-        qDebug() << "X: " << pos.x() << " Y: " << pos.y();
-
-
-        if (!isFirstAssigned) {
-            topLeft = pos;
-            isFirstAssigned = true;
-        } else {
-            bottomRight = pos;
-        }
-
-        if (rect != NULL) {
-            this->scene()->removeItem(rect);
-        }
-
-        rect = this->scene()->addRect(QRectF(topLeft, bottomRight));
-        update();
-    }
-
-    void mousePressEvent(QMouseEvent* event) {
-        QPointF pos =  mapToScene(event->pos());
-        if (event->button() == Qt::LeftButton)
-            topLeft = pos;
-
-        if (event->button() == Qt::RightButton) {
-            topLeft = QPointF(0,0);
-            bottomRight = QPointF(0,0);
-            if (rect != NULL) {
-                this->scene()->removeItem(rect);
-            }
-        }
-    }
-
-    void mouseReleasevent(QMouseEvent* event) {
-        QPointF pos =  mapToScene(event->pos());
-        if (event->button() == Qt::LeftButton)
-            bottomRight = pos;
-    }
-
+protected:
+    void mouseMoveEvent(QMouseEvent* event);
+    void mousePressEvent(QMouseEvent* event);
+    void mouseReleaseEvent(QMouseEvent* event);
 
 private:
-    bool isFirstAssigned;
-    QPointF topLeft;
-    QPointF bottomRight;
-    QGraphicsItem * rect;
-    QGraphicsPixmapItem* mBaseImage;
+    PIX* qImage2PIX(const QImage& qImage);
 
+    bool isFirstAssigned;
+
+    QPointF mTopLeft;
+    QPointF mBottomRight;
+    QGraphicsItem * mRectangle;
+    QGraphicsPixmapItem* mBaseImage;
 };
 
 #endif // IMAGEVIEW_H

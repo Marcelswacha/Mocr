@@ -4,9 +4,12 @@ TEMPLATE = app
 CONFIG += qt link_pkgconfig
 PKGCONFIG += tesseract
 
+QMAKE_CXXFLAGS += -std=c++11
+
 SOURCES += \
     main.cpp \
-    MainWindow.cpp
+    MainWindow.cpp \
+    ImageView.cpp
 
 HEADERS += \
     MainWindow.h \
