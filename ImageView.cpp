@@ -42,6 +42,7 @@ void ImageView::copy()
         mRectangle = nullptr;
 
         update();
+        centerOn(mBaseImage);
     }
 }
 
