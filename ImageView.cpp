@@ -9,10 +9,9 @@ ImageView::ImageView(QWidget* parent)
       isFirstAssigned(false),
       mTopLeft(QPointF(0,0)),
       mBottomRight(QPointF(0,0)),
-      mRectangle(nullptr)
+      mRectangle(nullptr),
+      mBaseImage(nullptr)
 {
-    QPixmap image(IM_PATH);
-    mBaseImage = new QGraphicsPixmapItem(image);
     QGraphicsScene* scene = new QGraphicsScene;
     scene->addItem(mBaseImage);
     setScene(scene);
@@ -20,14 +19,28 @@ ImageView::ImageView(QWidget* parent)
 
 void ImageView::load(const QString &path)
 {
+    if (mBaseImage != nullptr) {
+        scene()->removeItem(mBaseImage);
+        delete mBaseImage;
+    }
 
+    mBaseImage = new QGraphicsPixmapItem(QPixmap(path));
+    scene()->addItem(mBaseImage);
+    update();
 }
 
 void ImageView::copy()
 {
-    if (mRectangle != NULL) {
+    if (mRectangle != nullptr) {
         QPixmap copy = mBaseImage->pixmap().copy(QRectF(mTopLeft, mBottomRight).toAlignedRect());
         mBaseImage->setPixmap(copy);
+
+        // Reset rectangle
+        mTopLeft = QPointF(0,0);
+        mBottomRight = QPointF(0,0);
+        scene()->removeItem(mRectangle);
+        mRectangle = nullptr;
+
         update();
     }
 }
@@ -91,7 +104,7 @@ void ImageView::mousePressEvent(QMouseEvent* event)
         mTopLeft = QPointF(0,0);
         mBottomRight = QPointF(0,0);
         if (mRectangle != nullptr) {
-            this->scene()->removeItem(mRectangle);
+            scene()->removeItem(mRectangle);
         }
     }
 }

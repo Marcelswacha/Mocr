@@ -1,6 +1,7 @@
-#include <QVBoxLayout>
+#include <QFileDialog>
 #include <QHBoxLayout>
 #include <QToolButton>
+#include <QVBoxLayout>
 
 #include "MainWindow.h"
 #include "ImageView.h"
@@ -74,7 +75,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::onLoadButtonClicked()
 {
-
+    QString fileName = QFileDialog::getOpenFileName(this,
+        tr("Open Image"), "/home/m-swacha/Pulpit", tr("Image Files (*.png *.jpg *.bmp)"));
+    mImageView->load(fileName);
 }
 
 void MainWindow::onZoomInButtonClicked()
